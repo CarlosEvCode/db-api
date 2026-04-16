@@ -55,34 +55,18 @@
     <button
       style="display: none"
       id="button-transformacion"
-      onclick="
-        mostrarModalTransformacion(
-          document.getElementById('transformations-select').value,
-        )
-      "
+      onclick="mostrarModalTransformacion(document.getElementById('transformations-select').value)"
     >
-      Ve Transformación
+      Ver Transformación
     </button>
 
     <script>
-      // Lista de razas
       const races = [
-        "Human",
-        "Saiyan",
-        "Namekian",
-        "Majin",
-        "Frieza Race",
-        "Android",
-        "Jiren Race",
-        "God",
-        "Angel",
-        "Evil",
-        "Nucleico",
-        "Nucleico benigno",
-        "Unknown",
+        "Human", "Saiyan", "Namekian", "Majin", "Frieza Race", 
+        "Android", "Jiren Race", "God", "Angel", "Evil", 
+        "Nucleico", "Nucleico benigno", "Unknown"
       ];
 
-      // Llenar el select con las razas
       const select = document.getElementById("race-select");
       races.forEach((race) => {
         const option = document.createElement("option");
@@ -91,108 +75,93 @@
         select.appendChild(option);
       });
 
-      // Obtener characters por raza
+      let currentTransformations = [];
+
       function obtenerCharactersPorRaza(raza) {
-        fetch(
-          `https://dragonball-api.com/api/characters?race=${encodeURIComponent(raza)}&limit=5`,
-        )
+        if (!raza) return alert("Selecciona una raza");
+        fetch(`https://dragonball-api.com/api/characters?race=${encodeURIComponent(raza)}&limit=10`)
           .then((response) => response.json())
           .then((data) => {
-            console.log("Characters de raza " + raza + ":", data);
             const tableBody = document.querySelector("#characters-table tbody");
-            tableBody.innerHTML = ""; // Limpiar la tabla antes de llenarla
-            data.forEach((character) => {
+            tableBody.innerHTML = "";
+            // La API a veces devuelve un array directo o un objeto con items
+            const characters = Array.isArray(data) ? data : (data.items || []);
+            
+            characters.forEach((character) => {
               const row = document.createElement("tr");
               row.innerHTML = `
                 <td>${character.name}</td>
                 <td>${character.ki}</td>
                 <td>${character.gender}</td>
-                <td><button onclick="mostrarImagen('${character.image}')">Mostrar Imagen</button></td>
-                <td><button onclick="mostrarDetalle(${character.id})">Mostrar Detalle</button></td>
+                <td><button onclick="mostrarImagen('${character.image}')">Ver Imagen</button></td>
+                <td><button onclick="mostrarDetalle(${character.id})">Ver Detalle</button></td>
               `;
               tableBody.appendChild(row);
             });
           })
-          .catch((error) => {
-            console.error("Error al obtener characters por raza:", error);
-          });
-      }
-
-      function obtenerTransformacionesPorCharacter(characterId) {
-        fetch(
-          `https://dragonball-api.com/api/characters/${characterId}/transformations`,
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(
-              "Transformaciones del character " + characterId + ":",
-              data,
-            );
-            const select = document.getElementById("transformations-select");
-            data.forEach((transformation) => {
-              const option = document.createElement("option");
-              option.value = transformation.id;
-              option.textContent = transformation.name;
-              select.appendChild(option);
-            });
-          })
-          .catch((error) => {
-            console.error(
-              "Error al obtener transformaciones por character:",
-              error,
-            );
-          });
-      }
-
-      function limpiarTabla() {
-        const tableBody = document.querySelector("#characters-table tbody");
-        tableBody.innerHTML = "";
+          .catch((error) => console.error("Error:", error));
       }
 
       function mostrarImagen(imageUrl) {
         const modal = document.getElementById("image-modal");
         const modalImage = document.getElementById("modal-image");
         modalImage.src = imageUrl;
+        modalImage.style.maxWidth = "300px";
         modal.style.display = "block";
+        modal.onclick = () => modal.style.display = "none"; // Cerrar al hacer clic
       }
 
       function mostrarDetalle(characterId) {
         fetch(`https://dragonball-api.com/api/characters/${characterId}`)
           .then((response) => response.json())
           .then((data) => {
-            console.log("Detalle del character " + characterId + ":", data);
-            const select = document.getElementById("transformations-select");
+            const transSelect = document.getElementById("transformations-select");
             const modal = document.getElementById("detail-modal");
             const modalDetail = document.getElementById("modal-detail");
-            const buttonTransformacion = document.getElementById(
-              "button-transformacion",
-            );
-            modalDetail.textContent = `Nombre: ${data.name}, Ki: ${data.ki}, Género: ${data.gender}`;
-            select.style.display = "block";
+            const btnTrans = document.getElementById("button-transformacion");
+
+            modalDetail.innerHTML = `
+              <strong>Nombre:</strong> ${data.name}<br>
+              <strong>Ki:</strong> ${data.ki}<br>
+              <strong>Raza:</strong> ${data.race}<br>
+              <strong>Descripción:</strong> ${data.description}
+            `;
+            
+            currentTransformations = data.transformations || [];
+            if (currentTransformations.length > 0) {
+              llenarSelectTransformaciones(currentTransformations);
+              transSelect.style.display = "inline-block";
+              btnTrans.style.display = "inline-block";
+            } else {
+              transSelect.style.display = "none";
+              btnTrans.style.display = "none";
+            }
+            
             modal.style.display = "block";
-            buttonTransformacion.style.display = "block";
-            obtenerTransformacionesPorCharacter(characterId);
-            llenarSelectTransformaciones(data.transformations);
+            // Mostrar también la imagen del personaje
+            mostrarImagen(data.image);
           })
-          .catch((error) => {
-            console.error("Error al obtener detalle del character:", error);
-          });
+          .catch((error) => console.error("Error:", error));
       }
+
       function llenarSelectTransformaciones(transformations) {
         const select = document.getElementById("transformations-select");
-        select.innerHTML = ""; // Limpiar el select antes de llenarlo
-        transformations.forEach((transformation) => {
+        select.innerHTML = '<option value="">Selecciona una transformación</option>';
+        transformations.forEach((t) => {
           const option = document.createElement("option");
-          option.value = transformation.id;
-          option.textContent = transformation.name;
+          option.value = t.id;
+          option.textContent = t.name;
           select.appendChild(option);
         });
       }
-      function mostrarModalTransformacion(transformation) {
-        const modal = document.getElementById("detail-modal");
-        const modalDetail = document.getElementById("modal-detail");
-        modalDetail.textContent = `Nombre: ${transformation.name}, Ki: ${transformation.ki}`;
-        modal.style.display = "block";
+
+      function mostrarModalTransformacion(id) {
+        if (!id) return alert("Selecciona una transformación");
+        const transformation = currentTransformations.find(t => t.id == id);
+        if (transformation) {
+          mostrarImagen(transformation.image);
+          alert(`Transformación: ${transformation.name}\nKi: ${transformation.ki}`);
+        }
       }
     </script>
   </body>
