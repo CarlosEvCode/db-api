@@ -37,6 +37,12 @@
         <!-- Aquí se llenarán los personajes -->
       </tbody>
     </table>
+    <!-- modal para imagen -->
+    <div id="image-modal" style="display: none">
+      <div id="modal-content">
+        <img id="modal-image" src="" alt="Character Image" />
+      </div>
+    </div>
     <script>
       // Lista de razas
       const races = [
@@ -67,7 +73,7 @@
       // Obtener characters por raza
       function obtenerCharactersPorRaza(raza) {
         fetch(
-          `https://dragonball-api.com/api/characters?race=${encodeURIComponent(raza)}&limit=5`
+          `https://dragonball-api.com/api/characters?race=${encodeURIComponent(raza)}&limit=5`,
         )
           .then((response) => response.json())
           .then((data) => {
@@ -93,6 +99,13 @@
       function limpiarTabla() {
         const tableBody = document.querySelector("#characters-table tbody");
         tableBody.innerHTML = "";
+      }
+
+      function mostrarImagen(imageUrl) {
+        const modal = document.getElementById("image-modal");
+        const modalImage = document.getElementById("modal-image");
+        modalImage.src = imageUrl;
+        modal.style.display = "block";
       }
     </script>
   </body>
