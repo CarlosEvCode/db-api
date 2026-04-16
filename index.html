@@ -12,16 +12,12 @@
       sobre los personajes, sus transformaciones y mucho más. Selecciona una
       raza para comenzar a explorar el universo de Dragon Ball.
     </p>
+    
     <select id="race-select">
       <option value="">Selecciona una raza</option>
     </select>
-    <button
-      onclick="
-        obtenerCharactersPorRaza(document.getElementById('race-select').value)
-      "
-    >
-      Buscar
-    </button>
+    <button id="btn-search">Buscar</button>
+
     <table id="characters-table" border="1">
       <thead>
         <tr>
@@ -36,6 +32,7 @@
         <!-- Aquí se llenarán los personajes -->
       </tbody>
     </table>
+
     <!-- modal para imagen -->
     <div id="image-modal" style="display: none">
       <div id="modal-content">
@@ -49,52 +46,92 @@
       </div>
     </div>
 
-    <select name="" id="transformations-select" style="display: none">
+    <select id="transformations-select" style="display: none">
       <option value="">Selecciona una transformación</option>
     </select>
-    <button
-      style="display: none"
-      id="button-transformacion"
-      onclick="mostrarModalTransformacion(document.getElementById('transformations-select').value)"
-    >
+    <button id="button-transformacion" style="display: none">
       Ver Transformación
     </button>
 
     <script>
+      // Elementos del DOM
+      const raceSelect = document.getElementById("race-select");
+      const btnSearch = document.getElementById("btn-search");
+      const tableBody = document.querySelector("#characters-table tbody");
+      
+      const imageModal = document.getElementById("image-modal");
+      const modalImage = document.getElementById("modal-image");
+      
+      const detailModal = document.getElementById("detail-modal");
+      const modalDetail = document.getElementById("modal-detail");
+      
+      const transSelect = document.getElementById("transformations-select");
+      const btnTrans = document.getElementById("button-transformacion");
+
+      let currentTransformations = [];
       const races = [
         "Human", "Saiyan", "Namekian", "Majin", "Frieza Race", 
         "Android", "Jiren Race", "God", "Angel", "Evil", 
         "Nucleico", "Nucleico benigno", "Unknown"
       ];
 
-      const select = document.getElementById("race-select");
+      // Llenar el select de razas
       races.forEach((race) => {
         const option = document.createElement("option");
         option.value = race;
         option.textContent = race;
-        select.appendChild(option);
+        raceSelect.appendChild(option);
       });
 
-      let currentTransformations = [];
+      // Listeners
+      btnSearch.addEventListener("click", () => {
+        obtenerCharactersPorRaza(raceSelect.value);
+      });
 
+      btnTrans.addEventListener("click", () => {
+        mostrarModalTransformacion(transSelect.value);
+      });
+
+      imageModal.addEventListener("click", () => {
+        imageModal.style.display = "none";
+      });
+
+      // Funciones
       function obtenerCharactersPorRaza(raza) {
         if (!raza) return alert("Selecciona una raza");
+        
         fetch(`https://dragonball-api.com/api/characters?race=${encodeURIComponent(raza)}&limit=10`)
           .then((response) => response.json())
           .then((data) => {
-            const tableBody = document.querySelector("#characters-table tbody");
             tableBody.innerHTML = "";
             const characters = Array.isArray(data) ? data : (data.items || []);
             
             characters.forEach((character) => {
               const row = document.createElement("tr");
+              
+              // Celda Nombre, Ki, Genero
               row.innerHTML = `
                 <td>${character.name}</td>
                 <td>${character.ki}</td>
                 <td>${character.gender}</td>
-                <td><button onclick="mostrarImagen('${character.image}')">Ver Imagen</button></td>
-                <td><button onclick="mostrarDetalle(${character.id})">Ver Detalle</button></td>
               `;
+
+              // Celda Imagen con su botón
+              const tdImage = document.createElement("td");
+              const btnImg = document.createElement("button");
+              btnImg.textContent = "Ver Imagen";
+              btnImg.addEventListener("click", () => mostrarImagen(character.image));
+              tdImage.appendChild(btnImg);
+              row.appendChild(tdImage);
+
+              // Celda Detalle con su botón
+              const tdDetail = document.createElement("td");
+              const btnDet = document.createElement("button");
+              btnDet.textContent = "Ver Detalle";
+              btnDet.addEventListener("click", () => mostrarDetalle(character.id));
+              tdDetail.appendChild(btnDet);
+              row.appendChild(tdDetail);
+
               tableBody.appendChild(row);
             });
           })
@@ -102,23 +139,15 @@
       }
 
       function mostrarImagen(imageUrl) {
-        const modal = document.getElementById("image-modal");
-        const modalImage = document.getElementById("modal-image");
         modalImage.src = imageUrl;
         modalImage.style.maxWidth = "300px";
-        modal.style.display = "block";
-        modal.onclick = () => modal.style.display = "none"; // Cerrar al hacer clic
+        imageModal.style.display = "block";
       }
 
       function mostrarDetalle(characterId) {
         fetch(`https://dragonball-api.com/api/characters/${characterId}`)
           .then((response) => response.json())
           .then((data) => {
-            const transSelect = document.getElementById("transformations-select");
-            const modal = document.getElementById("detail-modal");
-            const modalDetail = document.getElementById("modal-detail");
-            const btnTrans = document.getElementById("button-transformacion");
-
             modalDetail.innerHTML = `
               <strong>Nombre:</strong> ${data.name}<br>
               <strong>Ki:</strong> ${data.ki}<br>
@@ -136,21 +165,19 @@
               btnTrans.style.display = "none";
             }
             
-            modal.style.display = "block";
-            // Mostrar también la imagen del personaje
+            detailModal.style.display = "block";
             mostrarImagen(data.image);
           })
           .catch((error) => console.error("Error:", error));
       }
 
       function llenarSelectTransformaciones(transformations) {
-        const select = document.getElementById("transformations-select");
-        select.innerHTML = '<option value="">Selecciona una transformación</option>';
+        transSelect.innerHTML = '<option value="">Selecciona una transformación</option>';
         transformations.forEach((t) => {
           const option = document.createElement("option");
           option.value = t.id;
           option.textContent = t.name;
-          select.appendChild(option);
+          transSelect.appendChild(option);
         });
       }
 
@@ -158,15 +185,11 @@
         if (!id) return;
         const transformation = currentTransformations.find(t => t.id == id);
         if (transformation) {
-          // Actualizar imagen
-          const modalImage = document.getElementById("modal-image");
           modalImage.src = transformation.image;
-          
-          // Actualizar texto del detalle
-          const modalDetail = document.getElementById("modal-detail");
           modalDetail.innerHTML = `
             <strong>Transformación:</strong> ${transformation.name}<br>
             <strong>Ki:</strong> ${transformation.ki}<br>
+            <small>(Mostrando transformación seleccionada)</small>
           `;
         }
       }
