@@ -15,6 +15,28 @@
     <select id="race-select">
       <option value="">Selecciona una raza</option>
     </select>
+    //boton para buscar el select
+    <button
+      onclick="
+        obtenerCharactersPorRaza(document.getElementById('race-select').value)
+      "
+    >
+      Buscar
+    </button>
+    <table id="characters-table" border="1">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Ki</th>
+          <th>Genero</th>
+          <th>Imagen</th>
+          <th>Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Aquí se llenarán los personajes -->
+      </tbody>
+    </table>
     <script>
       // Lista de razas
       const races = [
@@ -41,6 +63,39 @@
         option.textContent = race;
         select.appendChild(option);
       });
+
+      // Obtener characters por raza
+      function obtenerCharactersPorRaza(raza) {
+        fetch(
+          "https://dragonball-api.com/api/characters?race=" +
+            encodeURIComponent(raza) +
+            "&limit=5",
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Characters de raza " + raza + ":", data);
+            const tableBody = document.querySelector("#characters-table tbody");
+            tableBody.innerHTML = ""; // Limpiar la tabla antes de llenarla
+            data.forEach((character) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${character.name}</td>
+                <td>${character.ki}</td>
+                <td>${character.gender}</td>
+                <td><button onclick="mostrarImagen('${character.image}')">Mostrar Imagen</button></td>
+                <td><button onclick="mostrarDetalle(${character.id})">Mostrar Detalle</button></td>
+              `;
+              tableBody.appendChild(row);
+            });
+          })
+          .catch((error) => {
+            console.error("Error al obtener characters por raza:", error);
+          });
+      }
+      function limpiarTabla() {
+        const tableBody = document.querySelector("#characters-table tbody");
+        tableBody.innerHTML = "";
+      }
     </script>
   </body>
 </html>
