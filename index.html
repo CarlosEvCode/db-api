@@ -84,7 +84,6 @@
           .then((data) => {
             const tableBody = document.querySelector("#characters-table tbody");
             tableBody.innerHTML = "";
-            // La API a veces devuelve un array directo o un objeto con items
             const characters = Array.isArray(data) ? data : (data.items || []);
             
             characters.forEach((character) => {
@@ -156,11 +155,19 @@
       }
 
       function mostrarModalTransformacion(id) {
-        if (!id) return alert("Selecciona una transformación");
+        if (!id) return;
         const transformation = currentTransformations.find(t => t.id == id);
         if (transformation) {
-          mostrarImagen(transformation.image);
-          alert(`Transformación: ${transformation.name}\nKi: ${transformation.ki}`);
+          // Actualizar imagen
+          const modalImage = document.getElementById("modal-image");
+          modalImage.src = transformation.image;
+          
+          // Actualizar texto del detalle
+          const modalDetail = document.getElementById("modal-detail");
+          modalDetail.innerHTML = `
+            <strong>Transformación:</strong> ${transformation.name}<br>
+            <strong>Ki:</strong> ${transformation.ki}<br>
+          `;
         }
       }
     </script>
