@@ -15,7 +15,6 @@
     <select id="race-select">
       <option value="">Selecciona una raza</option>
     </select>
-    //boton para buscar el select
     <button
       onclick="
         obtenerCharactersPorRaza(document.getElementById('race-select').value)
@@ -43,6 +42,16 @@
         <img id="modal-image" src="" alt="Character Image" />
       </div>
     </div>
+
+    <div id="detail-modal" style="display: none">
+      <div id="detail-content">
+        <p id="modal-detail"></p>
+      </div>
+    </div>
+
+    <select name="" id="transformations-select" style="display: none">
+      <option value="">Selecciona una transformación</option>
+    </select>
     <script>
       // Lista de razas
       const races = [
@@ -96,6 +105,33 @@
             console.error("Error al obtener characters por raza:", error);
           });
       }
+
+      function obtenerTransformacionesPorCharacter(characterId) {
+        fetch(
+          `https://dragonball-api.com/api/characters/${characterId}/transformations`,
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(
+              "Transformaciones del character " + characterId + ":",
+              data,
+            );
+            const select = document.getElementById("transformations-select");
+            data.forEach((transformation) => {
+              const option = document.createElement("option");
+              option.value = transformation.id;
+              option.textContent = transformation.name;
+              select.appendChild(option);
+            });
+          })
+          .catch((error) => {
+            console.error(
+              "Error al obtener transformaciones por character:",
+              error,
+            );
+          });
+      }
+
       function limpiarTabla() {
         const tableBody = document.querySelector("#characters-table tbody");
         tableBody.innerHTML = "";
@@ -106,6 +142,35 @@
         const modalImage = document.getElementById("modal-image");
         modalImage.src = imageUrl;
         modal.style.display = "block";
+      }
+
+      function mostrarDetalle(characterId) {
+        fetch(`https://dragonball-api.com/api/characters/${characterId}`)
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Detalle del character " + characterId + ":", data);
+            const select = document.getElementById("transformations-select");
+            const modal = document.getElementById("detail-modal");
+            const modalDetail = document.getElementById("modal-detail");
+            modalDetail.textContent = `Nombre: ${data.name}, Ki: ${data.ki}, Género: ${data.gender}`;
+            select.style.display = "block";
+            modal.style.display = "block";
+            obtenerTransformacionesPorCharacter(characterId);
+            llenarSelectTransformaciones(data.transformations);
+          })
+          .catch((error) => {
+            console.error("Error al obtener detalle del character:", error);
+          });
+      }
+      function llenarSelectTransformaciones(transformations) {
+        const select = document.getElementById("transformations-select");
+        select.innerHTML = ""; // Limpiar el select antes de llenarlo
+        transformations.forEach((transformation) => {
+          const option = document.createElement("option");
+          option.value = transformation.id;
+          option.textContent = transformation.name;
+          select.appendChild(option);
+        });
       }
     </script>
   </body>
