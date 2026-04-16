@@ -67,9 +67,7 @@
       // Obtener characters por raza
       function obtenerCharactersPorRaza(raza) {
         fetch(
-          "https://dragonball-api.com/api/characters?race=" +
-            encodeURIComponent(raza) +
-            "&limit=5",
+          `https://dragonball-api.com/api/characters?race=${encodeURIComponent(raza)}&limit=5`
         )
           .then((response) => response.json())
           .then((data) => {
