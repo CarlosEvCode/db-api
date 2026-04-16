@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Api Dragon Ball</title>
+  </head>
+  <body>
+    <h1>Api Dragon Ball</h1>
+    <p>
+      Bienvenido a la API de Dragon Ball. Aquí puedes encontrar información
+      sobre los personajes, episodios y más relacionados con el universo de
+      Dragon Ball.
+    </p>
+    <select id="race-select">
+      <option value="">Selecciona una raza</option>
+    </select>
+    <script>
+      // Lista de razas
+      const races = [
+        "Human",
+        "Saiyan",
+        "Namekian",
+        "Majin",
+        "Frieza Race",
+        "Android",
+        "Jiren Race",
+        "God",
+        "Angel",
+        "Evil",
+        "Nucleico",
+        "Nucleico benigno",
+        "Unknown",
+      ];
+
+      // Llenar el select con las razas
+      const select = document.getElementById("race-select");
+      races.forEach((race) => {
+        const option = document.createElement("option");
+        option.value = race;
+        option.textContent = race;
+        select.appendChild(option);
+      });
+    </script>
+  </body>
+</html>
