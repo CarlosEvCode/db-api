@@ -1,198 +1,114 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Api Dragon Ball</title>
-  </head>
-  <body>
-    <h1>Api Dragon Ball</h1>
-    <p>
-      Bienvenido a la API de Dragon Ball. Aquí puedes encontrar información
-      sobre los personajes, sus transformaciones y mucho más. Selecciona una
-      raza para comenzar a explorar el universo de Dragon Ball.
-    </p>
-    
-    <select id="race-select">
-      <option value="">Selecciona una raza</option>
-    </select>
-    <button id="btn-search">Buscar</button>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Explorador de Dragon Ball API</title>
+    </head>
+    <body>
+        <header>
+            <h1>Api Dragon Ball</h1>
+            <p>
+                Bienvenido al universo de Dragon Ball. Explora personajes y sus
+                transformaciones por raza.
+            </p>
+        </header>
 
-    <table id="characters-table" border="1">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Ki</th>
-          <th>Genero</th>
-          <th>Imagen</th>
-          <th>Detalle</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Aquí se llenarán los personajes -->
-      </tbody>
-    </table>
+        <main>
+            <!-- Sección de búsqueda -->
+            <section id="search-section">
+                <label for="race-select">Filtrar por raza:</label>
+                <select id="race-select">
+                    <option value="">Selecciona una raza</option>
+                </select>
+                <button id="btn-search">Buscar Personajes</button>
+            </section>
 
-    <!-- modal para imagen -->
-    <div id="image-modal" style="display: none">
-      <div id="modal-content">
-        <img id="modal-image" src="" alt="Character Image" />
-      </div>
-    </div>
+            <!-- Sección de resultados -->
+            <section id="results-section">
+                <h2>Personajes Encontrados</h2>
+                <table id="characters-table" border="1">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Ki</th>
+                            <th>Género</th>
+                            <th>Imagen</th>
+                            <th>Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los personajes se cargarán aquí -->
+                    </tbody>
+                </table>
+            </section>
 
-    <div id="detail-modal" style="display: none">
-      <div id="detail-content">
-        <p id="modal-detail"></p>
-      </div>
-    </div>
+            <!-- Contenedor de detalles -->
+            <section id="info-section">
+                <!-- Detalle del personaje -->
+                <article
+                    id="detail-container"
+                    style="
+                        display: none;
+                        border: 1px solid #ccc;
+                        padding: 1em;
+                        margin-top: 1em;
+                    "
+                >
+                    <h3>Información del Personaje</h3>
+                    <div id="detail-content">
+                        <p id="modal-detail"></p>
+                    </div>
 
-    <select id="transformations-select" style="display: none">
-      <option value="">Selecciona una transformación</option>
-    </select>
-    <button id="button-transformacion" style="display: none">
-      Ver Transformación
-    </button>
+                    <!-- Controles de transformación integrados -->
+                    <div
+                        id="transformation-controls"
+                        style="
+                            margin-top: 1em;
+                            border-top: 1px dashed #aaa;
+                            padding-top: 1em;
+                        "
+                    >
+                        <label
+                            for="transformations-select"
+                            id="lbl-trans"
+                            style="display: none"
+                            >Transformaciones disponibles:</label
+                        >
+                        <select
+                            id="transformations-select"
+                            style="display: none"
+                        >
+                            <option value="">
+                                Selecciona una transformación
+                            </option>
+                        </select>
+                        <button
+                            id="button-transformacion"
+                            style="display: none"
+                        >
+                            Ver Transformación
+                        </button>
+                    </div>
+                </article>
 
-    <script>
-      // Elementos del DOM
-      const raceSelect = document.getElementById("race-select");
-      const btnSearch = document.getElementById("btn-search");
-      const tableBody = document.querySelector("#characters-table tbody");
-      
-      const imageModal = document.getElementById("image-modal");
-      const modalImage = document.getElementById("modal-image");
-      
-      const detailModal = document.getElementById("detail-modal");
-      const modalDetail = document.getElementById("modal-detail");
-      
-      const transSelect = document.getElementById("transformations-select");
-      const btnTrans = document.getElementById("button-transformacion");
-
-      let currentTransformations = [];
-      const races = [
-        "Human", "Saiyan", "Namekian", "Majin", "Frieza Race", 
-        "Android", "Jiren Race", "God", "Angel", "Evil", 
-        "Nucleico", "Nucleico benigno", "Unknown"
-      ];
-
-      // Llenar el select de razas
-      races.forEach((race) => {
-        const option = document.createElement("option");
-        option.value = race;
-        option.textContent = race;
-        raceSelect.appendChild(option);
-      });
-
-      // Listeners
-      btnSearch.addEventListener("click", () => {
-        obtenerCharactersPorRaza(raceSelect.value);
-      });
-
-      btnTrans.addEventListener("click", () => {
-        mostrarModalTransformacion(transSelect.value);
-      });
-
-      imageModal.addEventListener("click", () => {
-        imageModal.style.display = "none";
-      });
-
-      // Funciones
-      function obtenerCharactersPorRaza(raza) {
-        if (!raza) return alert("Selecciona una raza");
-        
-        fetch(`https://dragonball-api.com/api/characters?race=${encodeURIComponent(raza)}&limit=10`)
-          .then((response) => response.json())
-          .then((data) => {
-            tableBody.innerHTML = "";
-            const characters = Array.isArray(data) ? data : (data.items || []);
-            
-            characters.forEach((character) => {
-              const row = document.createElement("tr");
-              
-              // Celda Nombre, Ki, Genero
-              row.innerHTML = `
-                <td>${character.name}</td>
-                <td>${character.ki}</td>
-                <td>${character.gender}</td>
-              `;
-
-              // Celda Imagen con su botón
-              const tdImage = document.createElement("td");
-              const btnImg = document.createElement("button");
-              btnImg.textContent = "Ver Imagen";
-              btnImg.addEventListener("click", () => mostrarImagen(character.image));
-              tdImage.appendChild(btnImg);
-              row.appendChild(tdImage);
-
-              // Celda Detalle con su botón
-              const tdDetail = document.createElement("td");
-              const btnDet = document.createElement("button");
-              btnDet.textContent = "Ver Detalle";
-              btnDet.addEventListener("click", () => mostrarDetalle(character.id));
-              tdDetail.appendChild(btnDet);
-              row.appendChild(tdDetail);
-
-              tableBody.appendChild(row);
-            });
-          })
-          .catch((error) => console.error("Error:", error));
-      }
-
-      function mostrarImagen(imageUrl) {
-        modalImage.src = imageUrl;
-        modalImage.style.maxWidth = "300px";
-        imageModal.style.display = "block";
-      }
-
-      function mostrarDetalle(characterId) {
-        fetch(`https://dragonball-api.com/api/characters/${characterId}`)
-          .then((response) => response.json())
-          .then((data) => {
-            modalDetail.innerHTML = `
-              <strong>Nombre:</strong> ${data.name}<br>
-              <strong>Ki:</strong> ${data.ki}<br>
-              <strong>Raza:</strong> ${data.race}<br>
-              <strong>Descripción:</strong> ${data.description}
-            `;
-            
-            currentTransformations = data.transformations || [];
-            if (currentTransformations.length > 0) {
-              llenarSelectTransformaciones(currentTransformations);
-              transSelect.style.display = "inline-block";
-              btnTrans.style.display = "inline-block";
-            } else {
-              transSelect.style.display = "none";
-              btnTrans.style.display = "none";
-            }
-            
-            detailModal.style.display = "block";
-            mostrarImagen(data.image);
-          })
-          .catch((error) => console.error("Error:", error));
-      }
-
-      function llenarSelectTransformaciones(transformations) {
-        transSelect.innerHTML = '<option value="">Selecciona una transformación</option>';
-        transformations.forEach((t) => {
-          const option = document.createElement("option");
-          option.value = t.id;
-          option.textContent = t.name;
-          transSelect.appendChild(option);
-        });
-      }
-
-      function mostrarModalTransformacion(id) {
-        if (!id) return;
-        const transformation = currentTransformations.find(t => t.id == id);
-        if (transformation) {
-          modalImage.src = transformation.image;
-          modalDetail.innerHTML = `
-            <strong>Transformación:</strong> ${transformation.name}<br>
-            <strong>Ki:</strong> ${transformation.ki}<br>
-            <small>(Mostrando transformación seleccionada)</small>
-          `;
-        }
-      }
-    </script>
-  </body>
+                <!-- Visualizador de Imagen -->
+                <aside
+                    id="image-container"
+                    style="display: none; margin-top: 1em; text-align: center"
+                >
+                    <figure>
+                        <img
+                            id="modal-image"
+                            src=""
+                            alt="Visualización"
+                            style="max-width: 300px; cursor: pointer"
+                            title="Haz clic para cerrar"
+                        />
+                    </figure>
+                </aside>
+            </section>
+        </main>
+        <script src="script.js"></script>
+    </body>
 </html>
