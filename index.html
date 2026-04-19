@@ -1,114 +1,83 @@
 <!doctype html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Explorador de Dragon Ball API</title>
-    </head>
-    <body>
-        <header>
-            <h1>Api Dragon Ball</h1>
-            <p>
-                Bienvenido al universo de Dragon Ball. Explora personajes y sus
-                transformaciones por raza.
-            </p>
-        </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Explorador de Dragon Ball API</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Api Dragon Ball</h1>
+      <p>
+        Bienvenido al universo de Dragon Ball. Explora personajes y sus
+        transformaciones por raza.
+      </p>
+    </header>
 
-        <main>
-            <!-- Sección de búsqueda -->
-            <section id="search-section">
-                <label for="race-select">Filtrar por raza:</label>
-                <select id="race-select">
-                    <option value="">Selecciona una raza</option>
-                </select>
-                <button id="btn-search">Buscar Personajes</button>
-            </section>
+    <main>
+      <!-- Sección de búsqueda -->
+      <section id="search-section">
+        <label for="race-select">Filtrar por raza:</label>
+        <select id="race-select">
+          <option value="">Selecciona una raza</option>
+        </select>
+        <button id="btn-search">Buscar Personajes</button>
+      </section>
 
-            <!-- Sección de resultados -->
-            <section id="results-section">
-                <h2>Personajes Encontrados</h2>
-                <table id="characters-table" border="1">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Ki</th>
-                            <th>Género</th>
-                            <th>Imagen</th>
-                            <th>Detalle</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Los personajes se cargarán aquí -->
-                    </tbody>
-                </table>
-            </section>
+      <!-- Sección de resultados -->
+      <section id="results-section">
+        <h2>Personajes Encontrados</h2>
+        <table id="characters-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Ki</th>
+              <th>Género</th>
+              <th>Imagen</th>
+              <th>Detalle</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Los personajes se cargarán aquí -->
+          </tbody>
+        </table>
+      </section>
 
-            <!-- Contenedor de detalles -->
-            <section id="info-section">
-                <!-- Detalle del personaje -->
-                <article
-                    id="detail-container"
-                    style="
-                        display: none;
-                        border: 1px solid #ccc;
-                        padding: 1em;
-                        margin-top: 1em;
-                    "
-                >
-                    <h3>Información del Personaje</h3>
-                    <div id="detail-content">
-                        <p id="modal-detail"></p>
-                    </div>
+      <!-- Contenedor de detalles -->
+      <section id="info-section">
+        <!-- Detalle del personaje -->
+        <article id="detail-container">
+          <h3>Información del Personaje</h3>
+          <div id="detail-content">
+            <p id="modal-detail"></p>
+          </div>
 
-                    <!-- Controles de transformación integrados -->
-                    <div
-                        id="transformation-controls"
-                        style="
-                            margin-top: 1em;
-                            border-top: 1px dashed #aaa;
-                            padding-top: 1em;
-                        "
-                    >
-                        <label
-                            for="transformations-select"
-                            id="lbl-trans"
-                            style="display: none"
-                            >Transformaciones disponibles:</label
-                        >
-                        <select
-                            id="transformations-select"
-                            style="display: none"
-                        >
-                            <option value="">
-                                Selecciona una transformación
-                            </option>
-                        </select>
-                        <button
-                            id="button-transformacion"
-                            style="display: none"
-                        >
-                            Ver Transformación
-                        </button>
-                    </div>
-                </article>
+          <!-- Controles de transformación integrados -->
+          <div id="transformation-controls">
+            <label for="transformations-select" id="lbl-trans"
+              >Transformaciones disponibles:</label
+            >
+            <select id="transformations-select">
+              <option value="">Selecciona una transformación</option>
+            </select>
+            <button id="button-transformacion">Ver Transformación</button>
+          </div>
+        </article>
 
-                <!-- Visualizador de Imagen -->
-                <aside
-                    id="image-container"
-                    style="display: none; margin-top: 1em; text-align: center"
-                >
-                    <figure>
-                        <img
-                            id="modal-image"
-                            src=""
-                            alt="Visualización"
-                            style="max-width: 300px; cursor: pointer"
-                            title="Haz clic para cerrar"
-                        />
-                    </figure>
-                </aside>
-            </section>
-        </main>
-        <script src="script.js"></script>
-    </body>
+        <!-- Visualizador de Imagen -->
+        <aside id="image-container">
+          <figure>
+            <img
+              id="modal-image"
+              src=""
+              alt="Visualización"
+              title="Haz clic para cerrar"
+            />
+          </figure>
+        </aside>
+      </section>
+    </main>
+    <script src="script.js"></script>
+  </body>
 </html>

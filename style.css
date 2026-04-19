@@ -1,0 +1,119 @@
+:root {
+  --bg-color: #121212;
+  --container-bg: #1e1e1e;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --accent-color: #4dabf7;
+  --border-color: #333;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin: 0;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+header p {
+  color: var(--text-secondary);
+}
+
+main {
+  width: 100%;
+  max-width: 900px;
+}
+
+section {
+  margin-bottom: 2rem;
+}
+
+/* Form elements */
+select, button {
+  background-color: #2a2a2a;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+select:focus, button:hover {
+  border-color: var(--accent-color);
+  outline: none;
+}
+
+button {
+  background-color: #333;
+}
+
+button:active {
+  background-color: #444;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background-color: var(--container-bg);
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+th {
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+/* Info and Details */
+#detail-container {
+  background-color: var(--container-bg);
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  border-radius: 8px;
+}
+
+#transformation-controls {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--border-color);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Image */
+#image-container {
+  margin-top: 2rem;
+}
+
+#modal-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+/* Hide by default (JS will override) */
+#detail-container, #image-container {
+  display: none;
+}
