@@ -99,15 +99,19 @@ function mostrarDetalle(id) {
   fetch(`https://dragonball-api.com/api/characters/${id}`)
     .then((res) => res.json())
     .then((data) => {
-      // Actualizar información básica
+      // Insertar imagen y texto juntos en el detalle
       modalDetail.innerHTML = `
-              <strong>Nombre:</strong> ${data.name}<br>
-              <strong>Ki:</strong> ${data.ki}<br>
-              <strong>Raza:</strong> ${data.race}<br>
-              <strong>Descripción:</strong> ${data.description}
-            `;
+        <div class="detail-view">
+          <img src="${data.image}" class="detail-img-inner">
+          <div class="detail-text">
+            <strong>Nombre:</strong> ${data.name}<br>
+            <strong>Ki:</strong> ${data.ki}<br>
+            <strong>Raza:</strong> ${data.race}<br>
+            <p>${data.description}</p>
+          </div>
+        </div>
+      `;
 
-      // Gestionar transformaciones
       currentTransformations = data.transformations || [];
       const tieneTransformaciones = currentTransformations.length > 0;
 
@@ -123,8 +127,6 @@ function mostrarDetalle(id) {
       }
 
       detailContainer.style.display = "block";
-      // Mostrar imagen por defecto del personaje al abrir detalle
-      mostrarImagen(data.image);
     })
     .catch((err) => console.error("Error al obtener detalles:", err));
 }
@@ -144,10 +146,15 @@ function mostrarModalTransformacion(id) {
   if (!id) return;
   const trans = currentTransformations.find((t) => t.id == id);
   if (trans) {
-    // Actualizar imagen y texto
-    modalImage.src = trans.image;
+    // Actualizar imagen y texto dentro del detalle
     modalDetail.innerHTML = `
-            <strong>Transformación:</strong> ${trans.name}<br>
-            <strong>Ki:</strong> ${trans.ki}<br>`;
+      <div class="detail-view">
+        <img src="${trans.image}" class="detail-img-inner">
+        <div class="detail-text">
+          <strong>Transformación:</strong> ${trans.name}<br>
+          <strong>Ki:</strong> ${trans.ki}<br>
+        </div>
+      </div>
+    `;
   }
 }

@@ -81,6 +81,25 @@ th {
   margin-top: 1rem;
 }
 
+.detail-view {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.detail-img-inner {
+  width: 120px; /* Tamaño pequeño para el detalle */
+  height: auto;
+  border-radius: 8px;
+  background-color: #252525;
+  padding: 5px;
+  border: 1px solid #333;
+}
+
+.detail-text {
+  flex: 1;
+}
+
 #transformation-controls {
   margin-top: 1.5rem;
   padding-top: 1rem;
