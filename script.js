@@ -92,7 +92,7 @@ function obtenerCharactersPorRaza(raza) {
 
 function mostrarImagen(url) {
   modalImage.src = url;
-  imageContainer.style.display = "block";
+  imageContainer.style.display = "flex";
 }
 
 function mostrarDetalle(id) {
